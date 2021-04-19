@@ -1,0 +1,35 @@
+{
+  "name": "fhirpatch",
+  "version": "1.0.0",
+  "description": "Implementatio of FHIR Patch for Javascript",
+  "main": "index.js",
+  "repository": "https://github.com/caremesh/fhirpatch",
+  "author": "JP Narkinsky <patrick@caremesh.com>",
+  "license": "MIT",
+  "private": true,
+  "devDependencies": {
+    "eslint": "^7.23.0",
+    "eslint-config-google": "^0.14.0",
+    "grunt": "^1.3.0",
+    "grunt-cli": "^1.4.2",
+    "grunt-contrib-connect": "^3.0.0",
+    "grunt-text-replace": "^0.4.0",
+    "jit-grunt": "^0.10.0",
+    "mocha": "^8.3.2"
+  },
+  "dependencies": {
+    "@lhncbc/ucum-lhc": "^4.1.4",
+    "antlr4": "^4.9.2",
+    "chai": "^4.3.4",
+    "date-fns": "^2.21.1",
+    "fhir": "^4.8.2",
+    "rimraf": "^3.0.2"
+  },
+  "scripts": {
+    "generate-parser": "cd src/parser; rimraf ./generated/*; java -Xmx500M -cp \"../../vendor/antlr-4.9-complete.jar:$CLASSPATH\" org.antlr.v4.Tool -o generated -Dlanguage=JavaScript FHIRPath.g4; grunt updateParserRequirements",
+    "regenerate-tests": "saxonb-xslt test/fhir-patch-tests.xml test/fhirpatch.xml  | tail -n +2 > test/fhirpatch.test.js; eslint --fix test/fhirpatch.test.js",
+    "test": "mocha",
+    "test-helpers": "mocha --grep @helpers"
+  },
+  "type": "module"
+}
