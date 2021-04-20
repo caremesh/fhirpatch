@@ -53,7 +53,7 @@ import logic from './logic.mjs';
 import {isFn, typeFn, FP_DateTime, FP_Time, FP_Quantity, FP_Type, ResourceNode, TypeInfo} from './types.mjs';
 import './polyfill.mjs';
 
-const makeResNode = ResourceNode.mkeResNode;
+const makeResNode = ResourceNode.makeResNode;
 
 // * fn: handler
 // * arity: is index map with type signature
@@ -598,7 +598,8 @@ engine.evalTable = { // not every evaluator is listed if they are defined on eng
 engine.doEval = function(ctx, parentData, node) {
   const evaluator = engine.evalTable[node.type] || engine[node.type];
   if (evaluator) {
-    return evaluator.call(engine, ctx, parentData, node);
+    const result = evaluator.call(engine, ctx, parentData, node);
+    return result;
   } else {
     throw new Error('No ' + node.type + ' evaluator ');
   }

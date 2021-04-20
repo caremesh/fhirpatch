@@ -20,9 +20,11 @@
   "dependencies": {
     "@lhncbc/ucum-lhc": "^4.1.4",
     "antlr4": "^4.9.2",
+    "array-move": "^3.0.1",
     "chai": "^4.3.4",
     "date-fns": "^2.21.1",
     "fhir": "^4.8.2",
+    "fhirpath.js": "^0.0.6",
     "rimraf": "^3.0.2"
   },
   "scripts": {

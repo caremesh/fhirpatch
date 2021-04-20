@@ -1,4 +1,8 @@
 import {normalizeResource, processOperation} from './helpers.mjs';
+import {Fhir} from 'fhir';
+import cleanupResource from './cleanup-resource.mjs';
+
+const fhir = new Fhir();
 
 export default class FhirPatch {
   /**
@@ -25,34 +29,17 @@ export default class FhirPatch {
    *
    * @return {Object} the resource in object format.
    */
-  apply(resource) {
-    resource = normalizeResource(resource);
+  apply(resource, returnType) {
+    let rsc = normalizeResource(resource);
     for (const op of this._operations) {
-      if (op.path) {
-        if (op.path[0] !== resource.resourceType) {
-          continue;
-        }
-      }
-
-      switch (op.type) {
-        case 'replace':
-          const resource = this.modify(resource, op);
-        default:
-          throw new Error(`Unsupported operation type ${op.type}`);
-      }
+      rsc = op.apply(rsc);
     }
-    return resource;
-  }
 
-  // /**
-  //  * Descend the tree
-  //  *
-  //  * @param {Object} resource - the resource to modify
-  //  * @param {Object} op - the operation to apply
-  //  *
-  //  * @returns {Object} the modified resource
-  //  */
-  // function modify(resource, op) {
-  //   if ()
-  // }
+    rsc=cleanupResource(rsc);
+
+    if (returnType === 'xml') {
+      return fhir.objToXml(rsc);
+    }
+    return rsc;
+  }
 };

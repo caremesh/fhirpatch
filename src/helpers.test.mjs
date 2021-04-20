@@ -1,7 +1,50 @@
-import {normalizeResource, processOperation} from './helpers.mjs';
+import {normalizeResource, processOperation, processValue} from './helpers.mjs';
 
 describe('Helpers @helpers', function() {
   describe('helpers.normalizeResource', function() {
+    it(
+        'should clone the resource',
+        function() {
+          const rsc = {
+            'resourceType': 'Parameters',
+            'parameter': [
+              {
+                'name': 'operation',
+                'parameter': [
+                  {
+                    'name': 'type',
+                    'valueCode': 'add',
+                  },
+                  {
+                    'name': 'path',
+                    'valueString': 'Patient',
+                  },
+                  {
+                    'name': 'name',
+                    'valueString': 'contact',
+                  },
+                  {
+                    'name': 'value',
+                    'parameter': [
+                      {
+                        'name': 'name',
+                        'valueHumanName': {
+                          'text': 'a name',
+                        },
+                      },
+                    ],
+                  },
+                ],
+              },
+            ],
+          };
+
+          const result = normalizeResource(rsc);
+          rsc.foo='bar';
+          expect(result.foo).to.be.undefined;
+        },
+    );
+    
     it(
         'should be able to keep an object as an object',
         function() {
@@ -158,7 +201,7 @@ describe('Helpers @helpers', function() {
           const result = processOperation(op);
 
           expect(result).to.include({
-            type: 'replace',
+            operator: 'replace',
             value: '1930-01-01',
           });
           expect(result.path).to.be.a('function');
@@ -179,7 +222,7 @@ describe('Helpers @helpers', function() {
           const result = processOperation(op);
 
           expect(result).to.include({
-            type: 'delete',
+            operator: 'delete',
           });
           expect(result.path).to.be.a('function');
         },
@@ -200,11 +243,33 @@ describe('Helpers @helpers', function() {
           const result = processOperation(op);
 
           expect(result).to.include({
-            type: 'replace',
+            operator: 'replace',
             value: 'female',
           });
           expect(result.path).to.be.a('function');
         },
     );
+  });
+});
+
+describe('helpers.processValue', function() {
+  it('should be able to process a paramterized object @processValue.1', function() {
+    const res = processValue({
+      name: 'value',
+      parameter: [
+        {
+          name: 'name',
+          valueHumanName: {
+            text: 'a name',
+          },
+        },
+      ],
+    });
+
+    expect(res).to.eql([{
+      'name': {
+        'text': 'a name',
+      },
+    }]);
   });
 });

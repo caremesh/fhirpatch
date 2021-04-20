@@ -1,6 +1,6 @@
 import _ from 'lodash';
 import {Fhir} from 'fhir';
-import {compile} from './fhirpath.mjs';
+import Operation from './operation.mjs';
 
 const fhir = new Fhir;
 
@@ -41,29 +41,31 @@ export function processOperation(operation) {
   return Object
       .values(operation.parameter)
       .reduce(
-          function(accumulator, i) {
+          function(op, i) {
             switch (i.name) {
               case 'type':
-                return Object.assign(accumulator, {type: i.valueCode});
+                return Object.assign(op, {operator: i.valueCode});
               case 'path':
-                return Object.assign(accumulator, {path: compile(i.valueString)});
+                return Object.assign(op, {
+                  path: i.valueString,
+                });
               case 'name':
-                return Object.assign(accumulator, {name: i.valueString});
+                return Object.assign(op, {name: i.valueString});
               case 'value':
-                return Object.assign(accumulator,
+                return Object.assign(op,
                     {value: processValue(i)});
               case 'index':
-                return Object.assign(accumulator, {index: i.valueInteger});
+                return Object.assign(op, {index: i.valueInteger});
               case 'source':
-                return Object.assign(accumulator, {source: i.valueInteger});
+                return Object.assign(op, {source: i.valueInteger});
               case 'destination':
-                return Object.assign(accumulator, {
+                return Object.assign(op, {
                   destination: i.valueInteger});
               default:
                 throw new Error(`Received unrecognized parameter: ${i}`);
             }
           },
-          {},
+          new Operation(),
       );
 }
 
@@ -75,6 +77,21 @@ export function processOperation(operation) {
  * @return {any} the value
  */
 export function processValue(value) {
+  if (value.parameter) {
+    if (_.isArray(value.parameter)) {
+      return _.reduce(value.parameter,
+          (acc, i) => _.concat(
+              acc,
+              {[i.name]: processValue(i)},
+          ),
+          [],
+      );
+    } else if (_.isObject) {
+      return _.mapvalues(value.paramter, processValue);
+    } else {
+      throw new Error(`Invalid diff: couldn't process value of type parameter with content ${value}`);
+    }
+  }
   if (value.valueBase64Binary) {
     return value.valueBase64Binary;
   }
@@ -85,6 +102,10 @@ export function processValue(value) {
 
   if (value.valueCanonical) {
     return value.valueCanonical;
+  }
+
+  if (value.valueCodeableConcept) {
+    return value.valueCodeableConcept;
   }
 
   if (value.valueCode) {
@@ -101,6 +122,10 @@ export function processValue(value) {
 
   if (value.valueDecimal) {
     return value.valueDecimal;
+  }
+
+  if (value.valueHumanName) {
+    return value.valueHumanName;
   }
 
   if (value.valueId) {
@@ -157,31 +182,3 @@ export function processValue(value) {
 
   throw new Error(`Unsupported value.  Got ${JSON.stringify(value)}.`);
 }
-
-// /**
-//  * Returns a tokenized version of the provided path
-//  *
-//  * @param {String} path
-//  *
-//  * @return {Array}
-//  */
-// function parse(path=[]) {
-//   if (path.length === 0) {
-//     return [];
-//   }
-//   [head, tail] = path.split(/\./, path, 1);
-
-//   // Is it an array indexing operation?
-//   if (head.match(/(\w+)\[(\d+)\]/)) {
-//     return [...processIndex(head), ...tail];
-//   }
-
-
-//   // Is it a function call?
-//   if (/(\w+)\((\d+)\)/) {
-//     return [...processFunction(head), ...parsePath(tail)];
-//   }
-
-//   // is it an expression?
-// }
-

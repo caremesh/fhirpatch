@@ -6,50 +6,140 @@ import Parser from './generated/FHIRPathParser.js';
 import PathListener from './generated/FHIRPathListener.js';
 import ErrorListener from './error-listener.mjs';
 
-function enterNode(ctx) {
-  const parentNode = this.parentStack[this.parentStack.length - 1];
-  const nodeType = p.slice(5); // remove "enter"
-  this._node = {type: nodeType};
-  this._node.text = ctx.getText();
-  if (!parentNode.children) {
-    parentNode.children = [];
-  }
-  parentNode.children.push(this._node);
-  this.parentStack.push(this._node);
-  // Also collect this node's terminal nodes, if any.  Terminal nodes are
-  // not walked with the rest of the tree, but include things like "+" and
-  // "-", which we need.
-  this._node.terminalNodeText = [];
-  for (const c of ctx.children) {
-    // Test for node type "TerminalNodeImpl".  Minimized code no longer
-    // has the original function names, so we can't rely on
-    // c.constructor.name.  It appears the TerminalNodeImpl is the only
-    // node with a "symbol" property, so test for that.
-    if (c.symbol) {
-      node.terminalNodeText.push(c.getText());
-    }
-  }
-};
-
-function exitNode(ctx) {
-  parentStack.pop();
-}
-
+const methods = [
+  'enterEntireExpression',
+  'exitEntireExpression',
+  'enterIndexerExpression',
+  'exitIndexerExpression',
+  'enterPolarityExpression',
+  'exitPolarityExpression',
+  'enterAdditiveExpression',
+  'exitAdditiveExpression',
+  'enterMultiplicativeExpression',
+  'exitMultiplicativeExpression',
+  'enterUnionExpression',
+  'exitUnionExpression',
+  'enterOrExpression',
+  'exitOrExpression',
+  'enterAndExpression',
+  'exitAndExpression',
+  'enterMembershipExpression',
+  'exitMembershipExpression',
+  'enterInequalityExpression',
+  'exitInequalityExpression',
+  'enterInvocationExpression',
+  'exitInvocationExpression',
+  'enterEqualityExpression',
+  'exitEqualityExpression',
+  'enterImpliesExpression',
+  'exitImpliesExpression',
+  'enterTermExpression',
+  'exitTermExpression',
+  'enterTypeExpression',
+  'exitTypeExpression',
+  'enterInvocationTerm',
+  'exitInvocationTerm',
+  'enterLiteralTerm',
+  'exitLiteralTerm',
+  'enterExternalConstantTerm',
+  'exitExternalConstantTerm',
+  'enterParenthesizedTerm',
+  'exitParenthesizedTerm',
+  'enterNullLiteral',
+  'exitNullLiteral',
+  'enterBooleanLiteral',
+  'exitBooleanLiteral',
+  'enterStringLiteral',
+  'exitStringLiteral',
+  'enterNumberLiteral',
+  'exitNumberLiteral',
+  'enterDateTimeLiteral',
+  'exitDateTimeLiteral',
+  'enterTimeLiteral',
+  'exitTimeLiteral',
+  'enterQuantityLiteral',
+  'exitQuantityLiteral',
+  'enterExternalConstant',
+  'exitExternalConstant',
+  'enterMemberInvocation',
+  'exitMemberInvocation',
+  'enterFunctionInvocation',
+  'exitFunctionInvocation',
+  'enterThisInvocation',
+  'exitThisInvocation',
+  'enterIndexInvocation',
+  'exitIndexInvocation',
+  'enterTotalInvocation',
+  'exitTotalInvocation',
+  'enterFunctn',
+  'exitFunctn',
+  'enterParamList',
+  'exitParamList',
+  'enterQuantity',
+  'exitQuantity',
+  'enterUnit',
+  'exitUnit',
+  'enterDateTimePrecision',
+  'exitDateTimePrecision',
+  'enterPluralDateTimePrecision',
+  'exitPluralDateTimePrecision',
+  'enterTypeSpecifier',
+  'exitTypeSpecifier',
+  'enterQualifiedIdentifier',
+  'exitQualifiedIdentifier',
+  'enterIdentifier',
+  'exitIdentifier',
+];
 class Listener extends PathListener {
-  constructor() {
-    super();
-    const superclass = Object.getPrototypeOf(this);
-    for (const methodName of Object.getOwnPropertyNames(superclass)) {
+  constructor(input) {
+    super(input);
+
+    for (const methodName of methods) {
       if (methodName.startsWith('enter')) {
-        this[methodName] = enterNode.bind(this);
+        this.makeEnterNode(methodName);
       } else if (methodName.startsWith('exit')) {
-        this[methodName] = exitNode.bind(this);
+        this.makeExitNode(methodName);
       }
     }
 
     this.ast = {};
-    this._parentStack = [this.ast];
-    this._node = null;
+    this.parentStack = [this.ast];
+    this.node = null;
+  }
+
+  makeEnterNode(methodName) {
+    function enterNode(ctx) {
+      const parentNode = this.parentStack[this.parentStack.length - 1];
+      const nodeType = methodName.slice(5); // remove "enter"
+      this.node = {type: nodeType};
+      this.node.text = ctx.getText();
+      if (!parentNode.children) {
+        parentNode.children = [];
+      }
+      parentNode.children.push(this.node);
+      this.parentStack.push(this.node);
+      // Also collect this node's terminal nodes, if any.  Terminal nodes are
+      // not walked with the rest of the tree, but include things like "+" and
+      // "-", which we need.
+      this.node.terminalNodeText = [];
+      for (const c of ctx.children) {
+        // Test for node type "TerminalNodeImpl".  Minimized code no longer
+        // has the original function names, so we can't rely on
+        // c.constructor.name.  It appears the TerminalNodeImpl is the only
+        // node with a "symbol" property, so test for that.
+        if (c.symbol) {
+          this.node.terminalNodeText.push(c.getText());
+        }
+      }
+    };
+    this[methodName] = enterNode.bind(this);
+  }
+
+  makeExitNode(methodName) {
+    function exitNode(ctx) {
+      this.parentStack.pop();
+    }
+    this[methodName] = exitNode.bind(this);
   }
 }
 
@@ -63,12 +153,12 @@ export default function parse(path) {
   const parser = new Parser(tokens);
   parser.buildParseTrees = true;
   const errors = [];
-  const listener = new ErrorListener(errors);
+  const errorListener = new ErrorListener(errors);
 
   lexer.removeErrorListeners();
-  lexer.addErrorListener(listener);
+  lexer.addErrorListener(errorListener);
   parser.removeErrorListeners();
-  parser.addErrorListener(listener);
+  parser.addErrorListener(errorListener);
 
   const tree = parser.entireExpression();
 
@@ -116,8 +206,8 @@ export default function parse(path) {
   //   }
   // }
 
-  const printer = new Listener();
-  antlr4.tree.ParseTreeWalker.DEFAULT.walk(printer, tree);
+  const extractor = new Listener(parser);
+  antlr4.tree.ParseTreeWalker.DEFAULT.walk(extractor, tree);
 
   if (errors.length > 0) {
     const errMsgs = [];
@@ -130,6 +220,6 @@ export default function parse(path) {
     e.errors = errors;
     throw e;
   }
-  return printer.ast;
+  return extractor.ast;
 };
 

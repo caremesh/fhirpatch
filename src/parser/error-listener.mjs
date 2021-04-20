@@ -18,6 +18,7 @@ export default class ErrorListener extends antlr4.error.ErrorListener {
    * @param {string} payload Stack trace
    */
   syntaxError(recognizer, symbol, line, column, message, payload) {
+    console.error(message);
     throw new Error({line, column, message});
   }
 }

@@ -175,6 +175,11 @@ array-each@^1.0.1:
   resolved "https://registry.yarnpkg.com/array-each/-/array-each-1.0.1.tgz#a794af0c05ab1752846ee753a1f211a05ba0c44f"
   integrity sha1-p5SvDAWrF1KEbudTofIRoFugxE8=
 
+array-move@^3.0.1:
+  version "3.0.1"
+  resolved "https://registry.yarnpkg.com/array-move/-/array-move-3.0.1.tgz#179645cc0987b65953a4fc06b6df9045e4ba9618"
+  integrity sha512-H3Of6NIn2nNU1gsVDqDnYKY/LCdWvCMMOWifNGhKcVQgiZ6nOek39aESOvro6zmueP07exSl93YLvkN4fZOkSg==
+
 array-slice@^1.0.0:
   version "1.1.0"
   resolved "https://registry.yarnpkg.com/array-slice/-/array-slice-1.1.0.tgz#e368ea15f89bc7069f7ffb89aec3a6c7d4ac22d4"
@@ -878,6 +883,11 @@ fhir@^4.8.2:
     q "^1.4.1"
     randomatic "^3.1.0"
     xml-js "^1.6.8"
+
+fhirpath.js@^0.0.6:
+  version "0.0.6"
+  resolved "https://registry.yarnpkg.com/fhirpath.js/-/fhirpath.js-0.0.6.tgz#387f6442b8674fcea395ea81dbe6ee0969fe0457"
+  integrity sha1-OH9kQrhnT86jleqB2+buCWn+BFc=
 
 file-entry-cache@^6.0.1:
   version "6.0.1"
