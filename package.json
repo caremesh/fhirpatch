@@ -5,8 +5,7 @@
   "main": "index.js",
   "repository": "https://github.com/caremesh/fhirpatch",
   "author": "JP Narkinsky <patrick@caremesh.com>",
-  "license": "MIT",
-  "private": true,
+  "license": "BSD3",
   "devDependencies": {
     "eslint": "^7.23.0",
     "eslint-config-google": "^0.14.0",
