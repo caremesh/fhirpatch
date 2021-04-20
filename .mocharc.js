@@ -3,8 +3,8 @@ module.exports = {
     "./.mocha.init.js",
   ],
   spec: [
-    'src/*.test.mjs',
-    'test/*.test.mjs'
+    'src/*.test.js',
+    'test/*.test.js'
   ],
   timeout: 20000,
   exit: true,

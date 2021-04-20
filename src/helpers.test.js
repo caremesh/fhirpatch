@@ -1,4 +1,4 @@
-import {normalizeResource, processOperation, processValue} from './helpers.mjs';
+const {normalizeResource, processOperation, processValue} = require('./helpers');
 
 describe('Helpers @helpers', function() {
   describe('helpers.normalizeResource', function() {
@@ -253,7 +253,7 @@ describe('Helpers @helpers', function() {
 });
 
 describe('helpers.processValue', function() {
-  it('should be able to process a paramterized object @processValue.1', function() {
+  it('should be able to process a parameterized object @processValue.1', function() {
     const res = processValue({
       name: 'value',
       parameter: [

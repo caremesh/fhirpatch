@@ -1,5 +1,5 @@
-import FhirPatch from '../src/fhirpatch.mjs';
-import {Fhir} from 'fhir';
+const FhirPatch = require('../src/fhirpatch');
+const Fhir = require('fhir').Fhir;
 
 describe('apply', function() {
   let fhir;
@@ -8,7 +8,7 @@ describe('apply', function() {
   });
 
   it(
-      'should handle "No Difference" @apply.1',
+      'should handle "No Difference" @apply.01',
       async function() {
         const input=fhir.xmlToObj(`<Patient xmlns="http://hl7.org/fhir"><birthDate value="1920-01-01"/></Patient>`);
         const output=fhir.xmlToObj(`<Patient xmlns="http://hl7.org/fhir"><birthDate value="1920-01-01"/></Patient>`);
@@ -20,7 +20,7 @@ describe('apply', function() {
   );
 
   it(
-      'should handle "Replace Primitive" @apply.2',
+      'should handle "Replace Primitive" @apply.02',
       async function() {
         const input=fhir.xmlToObj(`<Patient xmlns="http://hl7.org/fhir"><birthDate value="1920-01-01"/></Patient>`);
         const output=fhir.xmlToObj(`<Patient xmlns="http://hl7.org/fhir"><birthDate value="1930-01-01"/></Patient>`);
@@ -32,7 +32,7 @@ describe('apply', function() {
   );
 
   it(
-      'should handle "Delete Primitive" @apply.3',
+      'should handle "Delete Primitive" @apply.03',
       async function() {
         const input=fhir.xmlToObj(`<Patient xmlns="http://hl7.org/fhir"><birthDate value="1920-01-01"/></Patient>`);
         const output=fhir.xmlToObj(`<Patient xmlns="http://hl7.org/fhir"/>`);
@@ -44,7 +44,7 @@ describe('apply', function() {
   );
 
   it(
-      'should handle "Add Primitive" @apply.4',
+      'should handle "Add Primitive" @apply.04',
       async function() {
         const input=fhir.xmlToObj(`<Patient xmlns="http://hl7.org/fhir"/>`);
         const output=fhir.xmlToObj(`<Patient xmlns="http://hl7.org/fhir"><birthDate value="1930-01-01"/></Patient>`);
@@ -56,7 +56,7 @@ describe('apply', function() {
   );
 
   it(
-      'should handle "Delete Primitive #2" @apply.5',
+      'should handle "Delete Primitive #2" @apply.05',
       async function() {
         const input=fhir.xmlToObj(`<Patient xmlns="http://hl7.org/fhir"><birthDate value="1920-01-01"/></Patient>`);
         const output=fhir.xmlToObj(`<Patient xmlns="http://hl7.org/fhir"/>`);
@@ -68,7 +68,7 @@ describe('apply', function() {
   );
 
   it(
-      'should handle "Replace Nested Primitive #1" @apply.6',
+      'should handle "Replace Nested Primitive #1" @apply.06',
       async function() {
         const input=fhir.xmlToObj(`<Patient xmlns="http://hl7.org/fhir"><contact><name><text value="a name"/></name><gender value="male"/></contact></Patient>`);
         const output=fhir.xmlToObj(`<Patient xmlns="http://hl7.org/fhir"><contact><name><text value="a name"/></name><gender value="female"/></contact></Patient>`);
@@ -80,7 +80,7 @@ describe('apply', function() {
   );
 
   it(
-      'should handle "Replace Nested Primitive #2" @apply.7',
+      'should handle "Replace Nested Primitive #2" @apply.07',
       async function() {
         const input=fhir.xmlToObj(`<Patient xmlns="http://hl7.org/fhir"><contact><name><text value="a name"/></name><gender value="male"/></contact></Patient>`);
         const output=fhir.xmlToObj(`<Patient xmlns="http://hl7.org/fhir"><contact><name><text value="the name"/></name><gender value="male"/></contact></Patient>`);
@@ -92,7 +92,7 @@ describe('apply', function() {
   );
 
   it(
-      'should handle "Delete Nested Primitive #1" @apply.8',
+      'should handle "Delete Nested Primitive #1" @apply.08',
       async function() {
         const input=fhir.xmlToObj(`<Patient xmlns="http://hl7.org/fhir"><contact><name><text value="a name"/></name><gender value="male"/></contact></Patient>`);
         const output=fhir.xmlToObj(`<Patient xmlns="http://hl7.org/fhir"><contact><name><text value="a name"/></name></contact></Patient>`);
@@ -104,7 +104,7 @@ describe('apply', function() {
   );
 
   it(
-      'should handle "Delete Nested Primitive #2" @apply.9',
+      'should handle "Delete Nested Primitive #2" @apply.09',
       async function() {
         const input=fhir.xmlToObj(`<Patient xmlns="http://hl7.org/fhir"><contact><name><text value="a name"/></name><gender value="male"/></contact></Patient>`);
         const output=fhir.xmlToObj(`<Patient xmlns="http://hl7.org/fhir"><contact><gender value="male"/></contact></Patient>`);

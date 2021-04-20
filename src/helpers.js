@@ -1,6 +1,6 @@
-import _ from 'lodash';
-import {Fhir} from 'fhir';
-import Operation from './operation.mjs';
+const _ = require('lodash');
+const {Fhir} = require('fhir');
+const Operation = require('./operation');
 
 const fhir = new Fhir;
 
@@ -12,7 +12,7 @@ const fhir = new Fhir;
  *
  * @return {Object} a FHIR object
  */
-export function normalizeResource(resource) {
+function normalizeResource(resource) {
   if (_.isObject(resource)) {
     return {...resource};
   };
@@ -37,7 +37,7 @@ export function normalizeResource(resource) {
  *
  * @return {{type, path, name, value, index, source, destination}}
  */
-export function processOperation(operation) {
+function processOperation(operation) {
   return Object
       .values(operation.parameter)
       .reduce(
@@ -76,7 +76,7 @@ export function processOperation(operation) {
  *
  * @return {any} the value
  */
-export function processValue(value) {
+function processValue(value) {
   if (value.parameter) {
     if (_.isArray(value.parameter)) {
       return _.reduce(value.parameter,
@@ -182,3 +182,9 @@ export function processValue(value) {
 
   throw new Error(`Unsupported value.  Got ${JSON.stringify(value)}.`);
 }
+
+module.exports = {
+  normalizeResource,
+  processValue,
+  processOperation,
+};

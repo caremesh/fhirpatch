@@ -1,10 +1,10 @@
-import {normalizeResource, processOperation} from './helpers.mjs';
-import {Fhir} from 'fhir';
-import cleanupResource from './cleanup-resource.mjs';
+const {normalizeResource, processOperation} = require('./helpers');
+const {Fhir} = require('fhir');
+const cleanupResource = require('./cleanup-resource');
 
 const fhir = new Fhir();
 
-export default class FhirPatch {
+module.exports = class FhirPatch {
   /**
    *
    * @param {Object|String} params
