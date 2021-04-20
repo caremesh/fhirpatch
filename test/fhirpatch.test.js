@@ -319,6 +319,7 @@ describe('apply', function() {
       },
   );
 
+  // Skipped because it appears that the original test from the R4 spec is wrong.
   it.skip(
       'should handle "Reorder List #4" @apply.27',
       async function() {
@@ -355,6 +356,7 @@ describe('apply', function() {
       },
   );
 
+  // Skipped because it appears that there's something awry in our processing of the original test from the R4 spec.
   it.skip(
       'should handle "Full Resource" @apply.30',
       async function() {

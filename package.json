@@ -27,6 +27,7 @@
     "rimraf": "^3.0.2"
   },
   "scripts": {
+    "prepublish": "mocha; eslint",
     "regenerate-tests": "saxonb-xslt test/fhir-patch-tests.xml test/fhirpatch.xml  | tail -n +2 > test/fhirpatch.test.js; eslint --fix test/fhirpatch.test.js",
     "test": "mocha"
   }
