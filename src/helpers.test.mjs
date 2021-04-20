@@ -44,7 +44,7 @@ describe('Helpers @helpers', function() {
           expect(result.foo).to.be.undefined;
         },
     );
-    
+
     it(
         'should be able to keep an object as an object',
         function() {
@@ -203,8 +203,8 @@ describe('Helpers @helpers', function() {
           expect(result).to.include({
             operator: 'replace',
             value: '1930-01-01',
+            path: 'Patient.birthDate',
           });
-          expect(result.path).to.be.a('function');
         },
     );
 
@@ -223,8 +223,8 @@ describe('Helpers @helpers', function() {
 
           expect(result).to.include({
             operator: 'delete',
+            path: 'Patient.birthDate',
           });
-          expect(result.path).to.be.a('function');
         },
     );
 
@@ -245,8 +245,8 @@ describe('Helpers @helpers', function() {
           expect(result).to.include({
             operator: 'replace',
             value: 'female',
+            path: 'Patient.contact[0].gender',
           });
-          expect(result.path).to.be.a('function');
         },
     );
   });

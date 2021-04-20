@@ -24,14 +24,12 @@
     "chai": "^4.3.4",
     "date-fns": "^2.21.1",
     "fhir": "^4.8.2",
-    "fhirpath.js": "^0.0.6",
+    "fhirpath": "^2.7.4",
     "rimraf": "^3.0.2"
   },
   "scripts": {
-    "generate-parser": "cd src/parser; rimraf ./generated/*; java -Xmx500M -cp \"../../vendor/antlr-4.9-complete.jar:$CLASSPATH\" org.antlr.v4.Tool -o generated -Dlanguage=JavaScript FHIRPath.g4; grunt updateParserRequirements",
     "regenerate-tests": "saxonb-xslt test/fhir-patch-tests.xml test/fhirpatch.xml  | tail -n +2 > test/fhirpatch.test.js; eslint --fix test/fhirpatch.test.js",
-    "test": "mocha",
-    "test-helpers": "mocha --grep @helpers"
+    "test": "mocha"
   },
   "type": "module"
 }
