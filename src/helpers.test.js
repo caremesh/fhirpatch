@@ -1,4 +1,9 @@
-const {normalizeResource, processOperation, processValue} = require('./helpers');
+/*
+ * Copyright 2021, careMESH Inc.  Refer to LICENSE.md for licensing terms.
+ */
+
+const {normalizeResource, processOperation,
+  processValue} = require('./helpers');
 
 describe('Helpers @helpers', function() {
   describe('helpers.normalizeResource', function() {
@@ -253,23 +258,25 @@ describe('Helpers @helpers', function() {
 });
 
 describe('helpers.processValue', function() {
-  it('should be able to process a parameterized object @processValue.1', function() {
-    const res = processValue({
-      name: 'value',
-      parameter: [
-        {
-          name: 'name',
-          valueHumanName: {
-            text: 'a name',
-          },
-        },
-      ],
-    });
+  it(
+      'should be able to process a parameterized object @processValue.1',
+      function() {
+        const res = processValue({
+          name: 'value',
+          parameter: [
+            {
+              name: 'name',
+              valueHumanName: {
+                text: 'a name',
+              },
+            },
+          ],
+        });
 
-    expect(res).to.eql([{
-      'name': {
-        'text': 'a name',
-      },
-    }]);
-  });
+        expect(res).to.eql([{
+          'name': {
+            'text': 'a name',
+          },
+        }]);
+      });
 });

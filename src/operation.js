@@ -1,3 +1,7 @@
+/*
+ * Copyright 2021, careMESH Inc.  Refer to LICENSE.md for licensing terms.
+ */
+
 const _ = require('lodash');
 const fp = require('fhirpath');
 const arrayMove = require('array-move');

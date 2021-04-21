@@ -1,3 +1,7 @@
+/*
+ * Copyright 2021, careMESH Inc.  Refer to LICENSE.md for licensing terms.
+ */
+
 /* eslint-disable max-len */
 const _ = require('lodash');
 const {Fhir} = require('fhir');
@@ -211,9 +215,42 @@ function processValue(value) {
   throw new Error(`Unsupported value.  Got ${JSON.stringify(value)}.`);
 }
 
+/**
+ * this function removes all empty collections (recursively) from a FHIR
+ * object so that we comply with the FHIR spec which forbids empty containers
+ * in JSON form.
+ *
+ * @param {Object} val the resource to cleanup
+ * @return {Object}
+ */
+function cleanupResource(val) {
+  let node = _.clone(val);
+
+  if (_.isBoolean(node) || _.isNull(node) || _.isNumber(node)) {
+    return node;
+  }
+
+  if (_.isArray(node)) {
+    node = _.map(node, (i) => cleanupResource(i));
+  } else if (_.isObject(node)) {
+    node = _.mapValues(node, (i) => cleanupResource(i));
+    node = _.pickBy(node, (i) => (
+      (i) === false || !!i
+    ));
+  }
+
+  if (_.isEmpty(node) && (node !== false)) {
+    return undefined;
+  }
+
+
+  return node;
+}
 module.exports = {
   normalizeResource,
   processValue,
   processOperation,
   resourceFormat,
+  cleanupResource,
+
 };

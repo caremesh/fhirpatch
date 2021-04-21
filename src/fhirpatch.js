@@ -1,10 +1,27 @@
-const {normalizeResource, processOperation} = require('./helpers');
+/*
+ * Copyright 2021, careMESH Inc.  Refer to LICENSE.md for licensing terms.
+ */
+
+const {normalizeResource, processOperation, resourceFormat, cleanupResource} =
+  require('./helpers');
 const {Fhir} = require('fhir');
-const cleanupResource = require('./cleanup-resource');
 
 const fhir = new Fhir();
 
 module.exports = class FhirPatch {
+  /**
+   * Convenience method to apply a patch without an instance
+   *
+   * @param {Resource|string} resource as object or string
+   * @param {string|Object} patch the patch to apply
+   *
+   * @return {string|Object} the resource in the same format it was provided in
+   */
+  static apply(resource, patch) {
+    patch = new FhirPatch(patch);
+    return patch.apply(resource);
+  }
+
   /**
    *
    * @param {Object|String} params

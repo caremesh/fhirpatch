@@ -14,4 +14,6 @@ The files are:
   mocha + chai test file.
 
 Unless you make modifications to the XSL, you probably won't need to change
-these.
+these or regenerate them.
+
+Please note that test/fhirpatch.xml 
