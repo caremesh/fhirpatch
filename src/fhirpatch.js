@@ -2,12 +2,14 @@
  * Copyright 2021, careMESH Inc.  Refer to LICENSE.md for licensing terms.
  */
 
-const {normalizeResource, processOperation, resourceFormat, cleanupResource} =
-  require('./helpers');
+const _ = require('lodash');
 const {Fhir} = require('fhir');
+const {normalizeResource, processOperation, resourceFormat, cleanupResource} =
+require('./helpers');
+const validate = require('@d4l/js-fhir-validator');
+const {PatchInvalidError} = require('./errors');
 
 const fhir = new Fhir();
-
 module.exports = class FhirPatch {
   /**
    * Convenience method to apply a patch without an instance
@@ -28,8 +30,9 @@ module.exports = class FhirPatch {
    */
   constructor(params) {
     params = normalizeResource(params);
+
     if (params.resourceType !== 'Parameters') {
-      throw new Error(`Invalid resource type for a patch: ${
+      throw new PatchInvalidError(`Invalid resource type for a patch: ${
         params.resoruceType}`);
     }
 
@@ -47,6 +50,14 @@ module.exports = class FhirPatch {
    * @return {string|Object} the resource in the same format it was provided in
    */
   apply(resource) {
+    // Validate the resource before we start
+    if (!validate(resource)) {
+      throw new PatchInvalidError(
+          _.get(validate.errors, '0.message', 'Unknown Error'),
+      );
+    }
+
+
     const fmt = resourceFormat(resource);
     let rsc = normalizeResource(resource);
     for (const op of this._operations) {
@@ -54,6 +65,12 @@ module.exports = class FhirPatch {
     }
 
     rsc=cleanupResource(rsc);
+
+    if (!validate(resource)) {
+      throw new PatchInvalidError(
+          _.get(validate.errors, '0.message', 'Unknown Error'),
+      );
+    }
 
     switch (fmt) {
       case 'xml':

@@ -17,7 +17,7 @@ const patch = {
   resourceType: 'Parameters',
   parameter: [{
     name: 'operation',
-    parameter: [
+    part: [
       { name: 'path', valueString: 'Patient.birthDate' },
       { name: 'value', valueString: '-2020-01-01'},
       { name: 'type', valueString: 'replace' },
@@ -42,7 +42,21 @@ let patcher = new FhirPatch(patch);
 let result = patcher.apply(resource);
 ```
 
-Note that the apply operations will always return the resource in the format in which they received it.
+Apply operations will always return the resource in the format in which they received it.  The following
+formats are supported:
+
+* Javascript objects
+* JSON
+* XML
+
+The patcher will throw an exception whenever any of the following conditions obtains:
+
+1. The provided patch is not a valid FHIR parameters object.
+2. The provided patch isn't a valid FHIR patch.
+3. The path to be patched doesn't exist (except for delete operations).
+4. The required arguments for a given operation type are not present.
+5. The resource is invalid **before** patching.
+6. The resource is invalid **after** patching.
 
 ## Known Limitations
 
@@ -54,6 +68,9 @@ Note that the apply operations will always return the resource in the format in 
    fix right now.
 3. This library has not been tested on a browser, since we need it for use in node.
 4. There may be a limitation inherent to using an external FHIRPath implementation,
-   but it's not covered by the test case.  See comment on Operation#tail for discussion.
+   but it's not covered by the test cases and is not worth the time right now.  See 
+   comment on Operation#tail for discussion.
+5. FHIR object validation is not what it should be, and may well miss some cases
+   that the official FHIR validator would catch.
 
 
