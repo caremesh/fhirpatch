@@ -1,3 +1,4 @@
+/* eslint-disable max-len */
 const FhirPatch = require('../src/fhirpatch');
 const Fhir = require('fhir').Fhir;
 

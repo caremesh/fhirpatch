@@ -1,8 +1,36 @@
+/* eslint-disable max-len */
 const _ = require('lodash');
 const {Fhir} = require('fhir');
 const Operation = require('./operation');
 
 const fhir = new Fhir;
+
+/**
+ * Returns the format of the resource provided.
+ *
+ * @param {Object|string} resource
+ *
+ * @return {'json'|'xml'|'obj'}
+ */
+function resourceFormat(resource) {
+  if (_.isObject(resource)) {
+    return 'obj';
+  };
+
+  try {
+    JSON.parse(resource);
+    return 'json';
+  } catch (error) {
+    try {
+      fhir.xmlToObj(resource);
+      return 'xml';
+    } catch (error) {
+      throw new Error(
+          `Unrecognized resource format or invalid resource: ${resource}`,
+      );
+    }
+  }
+}
 
 /**
  * Given a resource in string or object formats, return it as an
@@ -187,4 +215,5 @@ module.exports = {
   normalizeResource,
   processValue,
   processOperation,
+  resourceFormat,
 };

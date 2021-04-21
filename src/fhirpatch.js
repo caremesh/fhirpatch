@@ -25,11 +25,12 @@ module.exports = class FhirPatch {
   /**
    * Apply the patch to the provided resource
    *
-   * @param {Resource|String} resource as object or string
+   * @param {Resource|string} resource as object or string
    *
-   * @return {Object} the resource in object format.
+   * @return {string|Object} the resource in the same format it was provided in
    */
-  apply(resource, returnType) {
+  apply(resource) {
+    const fmt = resourceFormat(resource);
     let rsc = normalizeResource(resource);
     for (const op of this._operations) {
       rsc = op.apply(rsc);
@@ -37,9 +38,29 @@ module.exports = class FhirPatch {
 
     rsc=cleanupResource(rsc);
 
-    if (returnType === 'xml') {
-      return fhir.objToXml(rsc);
+    switch (fmt) {
+      case 'xml':
+        return fhir.objToXml(rsc);
+      case 'json':
+        return JSON.stringify(rsc);
+      default:
+        return rsc;
     }
-    return rsc;
+  }
+
+  /**
+   * Get the list of operations for this patch.
+   */
+  get operations() {
+    return this._operations;
+  }
+
+  /**
+   * Set the list of operations for this patch.
+   *
+   * @param {Array} val
+   */
+  set operations(val) {
+    this._operations = val;
   }
 };
