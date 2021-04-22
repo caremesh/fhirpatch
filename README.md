@@ -73,4 +73,42 @@ The patcher will throw an exception whenever any of the following conditions obt
 5. FHIR object validation is not what it should be, and may well miss some cases
    that the official FHIR validator would catch.
 
+## Examples
 
+### Patch with a complex value
+
+```json
+{
+  "resourceType": "Parameters",
+  "parameter": [
+    {
+      "name": "operation",
+      "parameter": [
+        {
+          "name": "type",
+          "valueCode": "add"
+        },
+        {
+          "name": "path",
+          "valueString": "Patient"
+        },
+        {
+          "name": "name",
+          "valueString": "contact"
+        },
+        {
+          "name": "value",
+          "parameter": [
+            {
+              "name": "name",
+              "valueHumanName": {
+                "text": "a name"
+              }
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}
+```

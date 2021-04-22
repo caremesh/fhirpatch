@@ -1,7 +1,7 @@
 {
   "name": "fhirpatch",
   "version": "1.0.0",
-  "description": "Implementatio of FHIR Patch for Javascript",
+  "description": "Implementation of FHIR Patch for Javascript",
   "main": "src/index.js",
   "repository": "https://github.com/caremesh/fhirpatch",
   "author": "JP Narkinsky <patrick@caremesh.com>",
@@ -14,7 +14,6 @@
     "mocha": "^8.3.2"
   },
   "dependencies": {
-    "@d4l/js-fhir-validator": "^1.0.5",
     "array-move": "^3.0.1",
     "date-fns": "^2.21.1",
     "fhir": "^4.8.2",

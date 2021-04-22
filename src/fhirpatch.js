@@ -4,9 +4,8 @@
 
 const _ = require('lodash');
 const {Fhir} = require('fhir');
-const {normalizeResource, processOperation, resourceFormat, cleanupResource} =
-require('./helpers');
-const validate = require('@d4l/js-fhir-validator');
+const {normalizeResource, parseOperation, resourceFormat, cleanupResource} =
+  require('./helpers');
 const {PatchInvalidError} = require('./errors');
 
 const fhir = new Fhir();
@@ -38,7 +37,7 @@ module.exports = class FhirPatch {
 
     this._operations = [];
     for (const op of params.parameter || []) {
-      this._operations.push(processOperation(op));
+      this._operations.push(parseOperation(op));
     }
   }
 
@@ -51,12 +50,12 @@ module.exports = class FhirPatch {
    */
   apply(resource) {
     // Validate the resource before we start
-    if (!validate(resource)) {
+    const before = fhir.validate(resource);
+    if (!before.valid) {
       throw new PatchInvalidError(
-          _.get(validate.errors, '0.message', 'Unknown Error'),
+          _.get(before, 'messages.0.message', 'Unknown Error'),
       );
     }
-
 
     const fmt = resourceFormat(resource);
     let rsc = normalizeResource(resource);
@@ -66,9 +65,10 @@ module.exports = class FhirPatch {
 
     rsc=cleanupResource(rsc);
 
-    if (!validate(resource)) {
+    const after = fhir.validate(resource);
+    if (!after.valid) {
       throw new PatchInvalidError(
-          _.get(validate.errors, '0.message', 'Unknown Error'),
+          _.get(after, 'messages.0.message', 'Unknown Error'),
       );
     }
 

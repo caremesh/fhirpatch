@@ -2,7 +2,7 @@
  * Copyright 2021, careMESH Inc.  Refer to LICENSE.md for licensing terms.
  */
 
-const {normalizeResource, processOperation,
+const {normalizeResource, parseOperation,
   processValue} = require('./helpers');
 
 describe('Helpers @helpers', function() {
@@ -190,7 +190,7 @@ describe('Helpers @helpers', function() {
     );
   });
 
-  describe('helpers.processOperation', function() {
+  describe('helpers.parseOperation', function() {
     it(
         'should be able to handle an operation with a date value',
         function() {
@@ -203,7 +203,7 @@ describe('Helpers @helpers', function() {
             ],
           };
 
-          const result = processOperation(op);
+          const result = parseOperation(op);
 
           expect(result).to.include({
             operator: 'replace',
@@ -224,7 +224,7 @@ describe('Helpers @helpers', function() {
             ],
           };
 
-          const result = processOperation(op);
+          const result = parseOperation(op);
 
           expect(result).to.include({
             operator: 'delete',
@@ -245,7 +245,7 @@ describe('Helpers @helpers', function() {
             ],
           };
 
-          const result = processOperation(op);
+          const result = parseOperation(op);
 
           expect(result).to.include({
             operator: 'replace',

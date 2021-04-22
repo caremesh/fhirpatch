@@ -69,7 +69,7 @@ function normalizeResource(resource) {
  *
  * @return {{type, path, name, value, index, source, destination}}
  */
-function processOperation(operation) {
+function parseOperation(operation) {
   const result = Object
       .values(operation.parameter)
       .reduce(
@@ -317,7 +317,7 @@ function cleanupResource(val) {
 module.exports = {
   normalizeResource,
   processValue,
-  processOperation,
+  parseOperation,
   resourceFormat,
   cleanupResource,
 
