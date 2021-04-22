@@ -1,6 +1,6 @@
 {
   "name": "fhirpatch",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Implementation of FHIR Patch for Javascript",
   "main": "src/index.js",
   "repository": "https://github.com/caremesh/fhirpatch",
