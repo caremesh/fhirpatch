@@ -12,7 +12,7 @@ Please refer to `test/fhirpatch.test.js` for more examples.
 ```
 const {FhirPatch} = require('fhirpatch');
 
-# Create a new patch, to fix Feed Flintstone's birthdate from CE to BCE
+# Create a new patch, to fix Fred Flintstone's birthdate from CE to BCE
 const patch = {
   resourceType: 'Parameters',
   parameter: [{
