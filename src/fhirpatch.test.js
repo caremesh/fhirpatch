@@ -125,4 +125,8 @@ describe('fhirpatch @fhirpatch', function() {
     const p = new FhirPatch(patch);
     expect(p.toJSON()).to.eql(patch);
   });
+
+  it('should be able to handle an empty patch', function() {
+    expect(() => new FhirPatch()).not.to.throw();
+  });
 });

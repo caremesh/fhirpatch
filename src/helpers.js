@@ -336,5 +336,4 @@ module.exports = {
   parseOperation,
   resourceFormat,
   cleanupResource,
-
 };

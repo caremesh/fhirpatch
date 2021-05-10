@@ -28,15 +28,17 @@ module.exports = class FhirPatch {
    * @param {Object|String} params
    */
   constructor(params) {
-    params = normalizeResource(params);
+    if (params) {
+      params = normalizeResource(params);
 
-    if (params.resourceType !== 'Parameters') {
-      throw new PatchInvalidError(`Invalid resource type for a patch: ${
-        params.resoruceType}`);
+      if (params.resourceType !== 'Parameters') {
+        throw new PatchInvalidError(`Invalid resource type for a patch: ${
+          params.resoruceType}`);
+      }
     }
 
     this._operations = [];
-    for (const op of params.parameter || []) {
+    for (const op of _.get(params, 'parameter', [])) {
       this._operations.push(parseOperation(op));
     }
   }
