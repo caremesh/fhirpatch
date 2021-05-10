@@ -58,21 +58,6 @@ The patcher will throw an exception whenever any of the following conditions obt
 5. The resource is invalid **before** patching.
 6. The resource is invalid **after** patching.
 
-## Known Limitations
-
-1. It could definitely be faster and probably more robust by doing our own 
-   fhirpath implementation.
-2. Two of HL7's test cases don't pass.  In one case (@apply.27) I'm pretty 
-   sure the test case is at fault.  In the other, it's an issue of the 
-   code that autogenerates the test case and it'ss just not worth the time to 
-   fix right now.
-3. This library has not been tested on a browser, since we need it for use in node.
-4. There may be a limitation inherent to using an external FHIRPath implementation,
-   but it's not covered by the test cases and is not worth the time right now.  See 
-   comment on Operation#tail for discussion.
-5. FHIR object validation is not what it should be, and may well miss some cases
-   that the official FHIR validator would catch.
-
 ## Authoring support
 
 This library has support to help you create FHIR patches.
@@ -98,6 +83,20 @@ patch.operations.push(
 patch.toString('json'); // generate json of patch
 patch.describe(); // gernerate array of strings describing the patch operations in english
 ```
+## Known Limitations
+
+1. It could definitely be faster and probably more robust by doing our own 
+   fhirpath implementation.
+2. Two of HL7's test cases don't pass.  In one case (@apply.27) I'm pretty 
+   sure the test case is at fault.  In the other, it's an issue of the 
+   code that autogenerates the test case and it'ss just not worth the time to 
+   fix right now.
+3. This library has not been tested on a browser, since we need it for use in node.
+4. There may be a limitation inherent to using an external FHIRPath implementation,
+   but it's not covered by the test cases and is not worth the time right now.  See 
+   comment on Operation#tail for discussion.
+5. FHIR object validation is not what it should be, and may well miss some cases
+   that the official FHIR validator would catch.
 
 ## Examples
 
