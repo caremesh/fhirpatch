@@ -73,6 +73,32 @@ The patcher will throw an exception whenever any of the following conditions obt
 5. FHIR object validation is not what it should be, and may well miss some cases
    that the official FHIR validator would catch.
 
+## Authoring support
+
+This library has support to help you create FHIR patches.
+
+```
+patch = new FhirPatch();
+patch.operations.push(
+  new Operation({
+    type: 'delete',
+    path: 'Practitioner.telecom.where(value="6564664444")',    
+  }),
+  new Operation({
+    type: 'insert',
+    value: {
+      system: 'phone',
+      value: '75774767896',
+    },
+    valueType: 'valueContactPoint',
+    path: 'Practitioner.telecom',
+    index: 0,
+  });
+)
+patch.toString('json'); // generate json of patch
+patch.describe(); // gernerate array of strings describing the patch operations in english
+```
+
 ## Examples
 
 ### Patch with a complex value

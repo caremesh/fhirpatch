@@ -76,7 +76,7 @@ function parseOperation(operation) {
           function(op, i) {
             switch (i.name) {
               case 'type':
-                return Object.assign(op, {operator: i.valueCode});
+                return Object.assign(op, {type: i.valueCode});
               case 'path':
                 return Object.assign(op, {
                   path: i.valueString,
@@ -85,7 +85,10 @@ function parseOperation(operation) {
                 return Object.assign(op, {name: i.valueString});
               case 'value':
                 return Object.assign(op,
-                    {value: processValue(i)});
+                    {
+                      value: processValue(i),
+                      valueType: processValueType(i),
+                    });
               case 'index':
                 return Object.assign(op, {index: i.valueInteger});
               case 'source':
@@ -281,6 +284,19 @@ function processValue(value) {
   }
 
   throw new Error(`Unsupported value.  Got ${JSON.stringify(value)}.`);
+}
+
+/**
+ * Process a value and return it's fhir type
+ *
+ * @param {Object} value the node containing the value
+ *
+ * @return {string} the value's type
+ */
+function processValueType(value) {
+  const result = _.keys(value)
+      .filter((i) => i.startsWith('value'));
+  return _.get(result, '0', null);
 }
 
 /**

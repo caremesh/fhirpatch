@@ -89,7 +89,7 @@ describe('fhirpatch @fhirpatch', function() {
         expect(() => FhirPatch.apply(rsc, patch)).to.throw();
       });
 
-  it('should reject when the resulting path is empty', function() {
+  it('should reject when the resulting path is empty @fhirpatch.06', function() {
     const rsc = {
       resourceType: 'Patient',
     };
@@ -119,5 +119,10 @@ describe('fhirpatch @fhirpatch', function() {
     };
 
     expect(() => FhirPatch.apply(rsc, patch)).to.throw();
+  });
+
+  it('should be able to return the original patch @fhirpatch.07', function() {
+    const p = new FhirPatch(patch);
+    expect(p.toJSON()).to.eql(patch);
   });
 });

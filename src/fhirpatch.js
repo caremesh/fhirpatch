@@ -97,4 +97,16 @@ module.exports = class FhirPatch {
   set operations(val) {
     this._operations = val;
   }
+
+  /**
+   * Return a JSON serializable form of the patch
+   *
+   * @return {Object}
+   */
+  toJSON() {
+    return {
+      resourceType: 'Parameters',
+      parameter: _.map(this.operations, (i) => i.toJSON()),
+    };
+  }
 };

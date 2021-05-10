@@ -206,7 +206,7 @@ describe('Helpers @helpers', function() {
           const result = parseOperation(op);
 
           expect(result).to.include({
-            operator: 'replace',
+            type: 'replace',
             value: '1930-01-01',
             path: 'Patient.birthDate',
           });
@@ -227,7 +227,7 @@ describe('Helpers @helpers', function() {
           const result = parseOperation(op);
 
           expect(result).to.include({
-            operator: 'delete',
+            type: 'delete',
             path: 'Patient.birthDate',
           });
         },
@@ -248,7 +248,7 @@ describe('Helpers @helpers', function() {
           const result = parseOperation(op);
 
           expect(result).to.include({
-            operator: 'replace',
+            type: 'replace',
             value: 'female',
             path: 'Patient.contact[0].gender',
           });

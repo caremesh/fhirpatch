@@ -35,7 +35,7 @@ module.exports = class Operation {
   apply(resource) {
     let res;
 
-    switch (this.operator) {
+    switch (this.type) {
       case 'add':
         res = fp.evaluate(resource, this.path);
         if (res.length == 0) {
@@ -92,7 +92,7 @@ module.exports = class Operation {
 
         break;
       default:
-        throw new Error(`Unsupported operation type ${this.operator}`);
+        throw new Error(`Unsupported operation type ${this.type}`);
     }
     return resource;
   }
@@ -135,6 +135,63 @@ module.exports = class Operation {
   }
 
   /**
+   * returns a JSON serializable represenation of the operation
+   *
+   * @return {Object}
+   */
+  toJSON() {
+    const result = {
+      name: 'operation',
+      parameter: [
+        {name: 'type', valueCode: this.type},
+        {name: 'path', valueString: this.path},
+      ],
+    };
+
+    if (this.value) {
+      if (!this.valueType) {
+        throw new Error(
+            `Couldn't call toJSON on FHIR operation without value type!`);
+      }
+
+      result.parameter.push({
+        name: 'value',
+        [this.valueType]: this.value,
+      });
+    }
+
+    if (this.name) {
+      result.parameter.push({
+        name: 'name',
+        valueString: this.name,
+      });
+    }
+
+    if (_.isNumber(this.index)) {
+      result.parameter.push({
+        name: 'index',
+        valueInteger: this.index,
+      });
+    }
+
+    if (_.isNumber(this.source)) {
+      result.parameter.push({
+        name: 'source',
+        valueInteger: this.source,
+      });
+    }
+
+    if (_.isNumber(this.destination)) {
+      result.parameter.push({
+        name: 'destination',
+        valueInteger: this.destination,
+      });
+    }
+
+    return result;
+  }
+
+  /**
    * Confirm that the operation is valid.
    *
    * @throws {PatchInvalidError} when the patch is invalid
@@ -142,19 +199,19 @@ module.exports = class Operation {
   validate() {
     if (!this.path) {
       throw new PatchInvalidError(
-          `Missing required parameter for operator ${this.operator}: path`,
+          `Missing required parameter for type ${this.type}: path`,
       );
     }
 
-    switch (this.operator) {
+    switch (this.type) {
       case 'add':
         if (_.isEmpty(this.name)) {
           throw new PatchInvalidError(
-              `Missing required parameter for operator ${this.operator}: name`);
+              `Missing required parameter for type ${this.type}: name`);
         }
         if (_.isEmpty(this.value)) {
           throw new PatchInvalidError(
-              `Missing required parameter for operator ${this.operator}: value`,
+              `Missing required parameter for type ${this.type}: value`,
           );
         }
         break;
@@ -163,25 +220,25 @@ module.exports = class Operation {
       case 'insert':
         if (_.isEmpty(this.value)) {
           throw new PatchInvalidError(
-              `Missing required parameter for operator ${this.operator}: value`,
+              `Missing required parameter for type ${this.type}: value`,
           );
         }
         if (!_.isInteger(this.index)) {
           throw new PatchInvalidError(
-              `Missing required parameter for operator ${this.operator}: index`,
+              `Missing required parameter for type ${this.type}: index`,
           );
         }
         break;
       case 'move':
         if (!_.isInteger(this.source)) {
           throw new PatchInvalidError(
-              `Missing required parameter for operator ${this.operator
+              `Missing required parameter for type ${this.type
               }: source`,
           );
         }
         if (!_.isInteger(this.destination)) {
           throw new PatchInvalidError(
-              `Missing required parameter for operator ${this.operator
+              `Missing required parameter for type ${this.type
               }: destination`,
           );
         }
@@ -189,13 +246,13 @@ module.exports = class Operation {
       case 'replace':
         if (_.isEmpty(this.value)) {
           throw new PatchInvalidError(
-              `Missing required parameter for operator ${this.operator}: value`,
+              `Missing required parameter for type ${this.type}: value`,
           );
         }
         break;
       default:
         throw new PatchInvalidError(
-            `Unsupported operation type ${this.operator}`,
+            `Unsupported operation type ${this.type}`,
         );
     }
   }
