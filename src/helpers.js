@@ -157,6 +157,13 @@ function processValue(value) {
     return value.valueCodeableConcept;
   }
 
+  if (value.valueContactPoint) {
+    if (!_.isObject(value.valueContactPoint)) {
+      throw new Error(`Invalid value for type valueContactPoint: ${value.valueContactPoint}`);
+    }
+    return value.valueContactPoint;
+  }
+
   if (value.valueCode) {
     if (!_.isString(value.valueCode)) {
       throw new Error(`Invalid value for type valueCode: ${value.valueCode}`);
