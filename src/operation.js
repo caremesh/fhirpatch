@@ -34,7 +34,6 @@ module.exports = class Operation {
    */
   apply(resource) {
     let res;
-
     switch (this.type) {
       case 'add':
         res = fp.evaluate(resource, this.path);
@@ -62,13 +61,17 @@ module.exports = class Operation {
         }
         break;
       case 'insert':
-        res = fp.evaluate(resource, this.containingPath);
+        res = fp.evaluate(resource, this.path);
         if (res.length == 0) {
           throw new PathNotFoundError(
-              `Nothing to modify at path ${this.containingPath}`);
+              `Nothing to modify at path ${this.path}`);
         }
 
-        res[0][this.tail.path].splice(this.index, 0, this.value);
+        res.unshift(this.value);
+        const path = this.path.split('.');
+        path.shift();
+
+        _.set(resource, path.join('.'), res);
         break;
       case 'move':
         res = fp.evaluate(resource, this.containingPath);
