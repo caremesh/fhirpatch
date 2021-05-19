@@ -62,7 +62,11 @@ module.exports = class FhirPatch {
     const fmt = resourceFormat(resource);
     let rsc = normalizeResource(resource);
     for (const op of this._operations) {
-      rsc = op.apply(rsc);
+      try {
+        rsc = op.apply(rsc);
+      } catch (error) {
+        console.log(error);
+      }
     }
 
     rsc=cleanupResource(rsc);
