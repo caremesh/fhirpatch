@@ -192,6 +192,13 @@ function processValue(value) {
     return value.valueHumanName;
   }
 
+  if (value.valueContactPoint) {
+    if (!_.isObject(value.valueContactPoint)) {
+      throw new Error(`Invalid value for type valueContactPoint: ${value.valueContactPoint}`);
+    }
+    return value.valueContactPoint;
+  }
+
   if (value.valueId) {
     if (!_.isString(value.valueId)) {
       throw new Error(`Invalid value for type valueId: ${value.valueId}`);

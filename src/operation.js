@@ -5,7 +5,7 @@
 const _ = require('lodash');
 const fp = require('fhirpath');
 const arrayMove = require('array-move');
-const {PatchInvalidError} = require('./errors');
+const {PatchInvalidError, PathNotFoundError} = require('./errors');
 
 module.exports = class Operation {
   /**
@@ -66,6 +66,10 @@ module.exports = class Operation {
         if (res.length == 0) {
           throw new PathNotFoundError(
               `Nothing to modify at path ${this.containingPath}`);
+        }
+
+        if (!_.has(res, `0.${this.tail.path}`)) {
+          res[0][this.tail.path] = [];
         }
 
         res[0][this.tail.path].splice(this.index, 0, this.value);
