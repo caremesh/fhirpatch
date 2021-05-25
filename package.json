@@ -1,11 +1,11 @@
 {
   "name": "fhirpatch",
-  "version": "1.1.1",
+  "version": "1.1.2",
   "description": "Implementation of FHIR Patch for Javascript",
   "main": "src/index.js",
   "repository": "https://github.com/caremesh/fhirpatch",
   "author": "JP Narkinsky <patrick@caremesh.com>",
-  "license": "BSD3",
+  "license": "BSD-3-Clause",
   "devDependencies": {
     "chai": "^4.3.4",
     "eslint": "^7.23.0",
@@ -20,7 +20,7 @@
     "fhirpath": "^2.7.4"
   },
   "scripts": {
-    "prepublish": "mocha; eslint",
+    "prepublish": "yarn mocha; yarn eslint",
     "regenerate-tests": "saxonb-xslt test/fhir-patch-tests.xml test/fhirpatch.xml  | tail -n +2 > test/fhirpatch.test.js; eslint --fix test/fhirpatch.test.js",
     "test": "mocha"
   },

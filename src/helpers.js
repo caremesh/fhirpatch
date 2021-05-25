@@ -290,6 +290,13 @@ function processValue(value) {
     return value.valueIdentifier;
   }
 
+  if (value.valueCodeableConcept) {
+    if (!_.isObject(value.valueCodeableConcept)) {
+      throw new Error(`Invalid value for type valueCodeableConcept: ${value.valueCodeableConcept}`);
+    }
+    return value.valueCodeableConcept;
+  }
+
   throw new Error(`Unsupported value.  Got ${JSON.stringify(value)}.`);
 }
 

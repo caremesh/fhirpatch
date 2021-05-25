@@ -248,7 +248,7 @@ module.exports = class Operation {
         }
         break;
       case 'replace':
-        if (_.isEmpty(this.value)) {
+        if (!_.isBoolean(this.value) && !this.value) {
           throw new PatchInvalidError(
               `Missing required parameter for type ${this.type}: value`,
           );
