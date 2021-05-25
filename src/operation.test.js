@@ -1,6 +1,27 @@
 const Operation = require('./operation');
 
 describe('Operation', function() {
+  it('should be possible to apply a boolean replace', function() {
+    let op = new Operation({
+      type: 'replace',
+      path: `Organization.active`,
+      value: true,
+      valueType: 'valueBoolean',
+    });
+
+    result = op.apply({
+      active: false,
+      resourceType: 'Organization',
+      name: 'Test',
+    });
+    
+    expect(result).to.eql({
+      active: true,
+      resourceType: 'Organization',
+      name: 'Test',
+    })
+  });
+
   it('Should be possible to create a delete operation with the API and render it to JSON', function() {
     operation = new Operation({
       type: 'delete',

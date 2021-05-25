@@ -33,6 +33,7 @@ module.exports = class Operation {
    *                             was not found.
    */
   apply(resource) {
+    resource = this.cleanupResource(resource);
     let res;
 
     switch (this.type) {
@@ -101,6 +102,38 @@ module.exports = class Operation {
     return resource;
   }
 
+  /**
+   * this function removes all empty collections (recursively) from a FHIR
+   * object so that we comply with the FHIR spec which forbids empty containers
+   * in JSON form.
+   *
+   * @param {Object} val the resource to cleanup
+   * @return {Object}
+   */
+  cleanupResource(val) {
+    let node = _.clone(val);
+
+    if (_.isBoolean(node) || _.isNull(node) || _.isNumber(node)) {
+      return node;
+    }
+
+    if (_.isArray(node)) {
+      node = _.map(node, (i) => this.cleanupResource(i));
+    } else if (_.isObject(node)) {
+      node = _.mapValues(node, (i) => this.cleanupResource(i));
+      node = _.pickBy(node, (i) => (
+        (i) === false || !!i
+      ));
+    }
+
+    if (_.isEmpty(node) && (node !== false)) {
+      return undefined;
+    }
+
+
+    return node;
+  }
+
 
   /**
    * Get the containing path for this operation.  This is defined as every
@@ -152,7 +185,7 @@ module.exports = class Operation {
       ],
     };
 
-    if (this.value) {
+    if (_.has(this, 'value')) {
       if (!this.valueType) {
         throw new Error(
             `Couldn't call toJSON on FHIR operation without value type!`);
