@@ -33,7 +33,7 @@ module.exports = class FhirPatch {
 
       if (params.resourceType !== 'Parameters') {
         throw new PatchInvalidError(`Invalid resource type for a patch: ${
-          params.resoruceType}`);
+          params.resourceType}`);
       }
     }
 

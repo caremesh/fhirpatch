@@ -297,6 +297,112 @@ function processValue(value) {
     return value.valueCodeableConcept;
   }
 
+  if (_.has(value, 'valueReference')) {
+    if (!_.isObject(value.valueReference)) {
+      throw new Error(`Invalid value for type valueReference: ${value.valueReference}`);
+    }
+    return value.valueReference;
+  }
+
+  if (_.has(value, 'valueMeta')) {
+    if (!_.isObject(value.valueMeta)) {
+      throw new Error(`Invalid value for type valueMeta: ${value.valueMeta}`);
+    }
+    return value.valueMeta;
+  }
+
+  if (_.has(value, 'valueDosage')) {
+    if (!_.isObject(value.valueDosage)) {
+      throw new Error(`Invalid value for type valueDosage: ${value.valueDosage}`);
+    }
+    return value.valueDosage;
+  }
+
+  if (_.has(value, 'valueBackboneElement')) {
+    if (!_.isObject(value.valueBackboneElement)) {
+      throw new Error(`Invalid value for type valueBackboneElement: ${value.valueBackboneElement}`);
+    }
+    return value.valueBackboneElement;
+  }
+
+  if (_.has(value, 'valueNarrative')) {
+    if (!_.isObject(value.valueNarrative)) {
+      throw new Error(`Invalid value for type valueNarrative: ${value.valueNarrative}`);
+    }
+    return value.valueNarrative;
+  }
+
+  if (_.has(value, 'valueExtension')) {
+    if (!_.isObject(value.valueExtension)) {
+      throw new Error(`Invalid value for type valueExtension: ${value.valueExtension}`);
+    }
+    return value.valueExtension;
+  }
+
+  if (_.has(value, 'valueElementDefinition')) {
+    if (!_.isObject(value.valueElementDefinition)) {
+      throw new Error(`Invalid value for type valueElementDefinition: ${value.valueElementDefinition}`);
+    }
+    return value.valueElementDefinition;
+  }
+
+  if (_.has(value, 'valueContactDetail')) {
+    if (!_.isObject(value.valueContactDetail)) {
+      throw new Error(`Invalid value for type valueContactDetail: ${value.valueContactDetail}`);
+    }
+    return value.valueContactDetail;
+  }
+
+  if (_.has(value, 'valueContributor')) {
+    if (!_.isObject(value.valueContributor)) {
+      throw new Error(`Invalid value for type valueContributor: ${value.valueContributor}`);
+    }
+    return value.valueContributor;
+  }
+
+  if (_.has(value, 'valueDataRequirement')) {
+    if (!_.isObject(value.valueDataRequirement)) {
+      throw new Error(`Invalid value for type valueDataRequirement: ${value.valueDataRequirement}`);
+    }
+    return value.valueDataRequirement;
+  }
+
+  if (_.has(value, 'valueRelatedArtifact')) {
+    if (!_.isObject(value.valueRelatedArtifact)) {
+      throw new Error(`Invalid value for type valueRelatedArtifact: ${value.valueRelatedArtifact}`);
+    }
+    return value.valueRelatedArtifact;
+  }
+
+  if (_.has(value, 'valueUsageContext')) {
+    if (!_.isObject(value.valueUsageContext)) {
+      throw new Error(`Invalid value for type valueUsageContext: ${value.valueUsageContext}`);
+    }
+    return value.valueUsageContext;
+  }
+
+  if (_.has(value, 'valueParameterDefinition')) {
+    if (!_.isObject(value.valueParameterDefinition)) {
+      throw new Error(`Invalid value for type valueParameterDefinition: ${value.valueParameterDefinition}`);
+    }
+    return value.valueParameterDefinition;
+  }
+
+  if (_.has(value, 'valueExpression')) {
+    if (!_.isObject(value.valueExpression)) {
+      throw new Error(`Invalid value for type valueExpression: ${value.valueExpression}`);
+    }
+    return value.valueExpression;
+  }
+
+  if (_.has(value, 'valueTriggerDefinition')) {
+    if (!_.isObject(value.valueTriggerDefinition)) {
+      throw new Error(`Invalid value for type valueTriggerDefinition: ${value.valueTriggerDefinition}`);
+    }
+    return value.valueTriggerDefinition;
+  }
+
+
   throw new Error(`Unsupported value.  Got ${JSON.stringify(value)}.`);
 }
 
