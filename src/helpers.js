@@ -333,7 +333,7 @@ function processValue(value) {
   }
 
   if (_.has(value, 'valueExtension')) {
-    if (!_.isObject(value.valueExtension)) {
+    if (!_.isArray(value.valueExtension) && !_.isObject(value.valueExtension)) {
       throw new Error(`Invalid value for type valueExtension: ${value.valueExtension}`);
     }
     return value.valueExtension;
