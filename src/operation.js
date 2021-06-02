@@ -46,7 +46,7 @@ module.exports = class Operation {
         break;
       case 'delete':
         // if the tail path contains an operation, patch it to be an absolute index
-        if (_.includes(this.tail.path, '(')) {
+        if (this.tail.path.startsWith('where\(')) {
           const [idx] = fp.evaluate(resource, `${this.path}.$index`);
           this.path = `${this.containingPath}[${idx}]`;
         }
