@@ -157,6 +157,13 @@ function processValue(value) {
     return value.valueCodeableConcept;
   }
 
+  if (_.has(value, 'valueCoding')) {
+    if (!_.isObject(value.valueCoding)) {
+      throw new Error(`Invalid value for type valueCoding: ${value.valueCoding}`);
+    }
+    return value.valueCoding;
+  }
+
   if (_.has(value, 'valueCode')) {
     if (!_.isString(value.valueCode)) {
       throw new Error(`Invalid value for type valueCode: ${value.valueCode}`);
