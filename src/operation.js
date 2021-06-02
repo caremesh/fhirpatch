@@ -45,6 +45,12 @@ module.exports = class Operation {
         res[0][this.name] = this.value;
         break;
       case 'delete':
+        // if the tail path contains an operation, patch it to be an absolute index
+        if (_.includes(this.tail.path, '(')) {
+          const [idx] = fp.evaluate(resource, `${this.path}.$index`);
+          this.path = `${this.containingPath}[${idx}]`;
+        }
+
         res = fp.evaluate(resource, this.containingPath);
 
         if (res[0]) {
@@ -167,6 +173,8 @@ module.exports = class Operation {
     const parts = this.path.match(/\.(\w+)(\[(\d+)\])?$/);
     if (parts) {
       [, path,, index] = parts;
+    } else {
+      path = _.split(this.path, /\./g).reverse()[0];
     }
     return {path, index};
   }
