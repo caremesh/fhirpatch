@@ -51,14 +51,6 @@ module.exports = class FhirPatch {
    * @return {string|Object} the resource in the same format it was provided in
    */
   apply(resource) {
-    // Validate the resource before we start
-    const before = fhir.validate(resource);
-    if (!before.valid) {
-      throw new PatchInvalidError(
-          _.get(before, 'messages.0.message', 'Unknown Error'),
-      );
-    }
-
     const fmt = resourceFormat(resource);
     let rsc = normalizeResource(resource);
     for (const op of this._operations) {
@@ -66,13 +58,6 @@ module.exports = class FhirPatch {
     }
 
     rsc=cleanupResource(rsc);
-
-    const after = fhir.validate(resource);
-    if (!after.valid) {
-      throw new PatchInvalidError(
-          _.get(after, 'messages.0.message', 'Unknown Error'),
-      );
-    }
 
     switch (fmt) {
       case 'xml':
