@@ -161,4 +161,23 @@ describe('Operation', function() {
       expect(op.containingPath).to.eql('Practitioner.telecom');
     });
   });
+
+  it('should be able to delete a path that does exist @operation.8', async function() {
+    const op = new Operation({
+      type: 'delete',
+      path: 'Practitioner.telecom.where(value=\'foo.bar.com\')',
+    });
+
+    const resource = {
+      resourceType: 'Practitioner',
+      telecom: [{
+        'use': 'work',
+        'rank': 1,
+        'value': 'foo.bar.com',
+        'system': 'url',
+      }],
+    };
+    const result = op.apply(resource);
+    expect(result).to.eql({resourceType: 'Practitioner', telecom: []});
+  });
 });

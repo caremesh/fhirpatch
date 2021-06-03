@@ -175,7 +175,7 @@ module.exports = class Operation {
     if (parts) {
       [, path,, index] = parts;
     } else {
-      path = _.split(this.path, /\./g).reverse()[0];
+      path = this.pathTokens.reverse()[0];
     }
     return {path, index};
   }
