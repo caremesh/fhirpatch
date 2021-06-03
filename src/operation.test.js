@@ -129,4 +129,36 @@ describe('Operation', function() {
       ],
     });
   });
+
+  it('should be able to delete a path that doesn\'t exist @operation.7', async function() {
+    const op = new Operation({
+      type: 'delete',
+      path: 'Practitioner.telecom.where(value=\'directto:kristen.radcliff@rot.eclinicaldirectplus.com\')',
+    });
+
+    const resource = {
+      resourceType: 'Practitioner',
+    };
+    const result = op.apply(resource);
+    expect(result).to.eql(resource);
+  });
+
+  describe('containingPath', function() {
+    it('should properly parse paths of form "Organization.alias" @containingPath.1', async function() {
+      const op = new Operation({
+        type: 'delete',
+        path: 'Organization.alias',
+      });
+      expect(op.containingPath).to.eql('Organization');
+    });
+
+    it('should properly parse paths with operations @containingPath.2', async function() {
+      const op = new Operation({
+        type: 'delete',
+        path: 'Practitioner.telecom.where(value=\'directto:kristen.radcliff@rot.eclinicaldirectplus.com\')',
+      });
+
+      expect(op.containingPath).to.eql('Practitioner.telecom');
+    });
+  });
 });

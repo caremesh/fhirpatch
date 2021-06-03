@@ -4,6 +4,7 @@
 
 const _ = require('lodash');
 const fp = require('fhirpath');
+const fhir = require('fhir');
 const arrayMove = require('array-move');
 const {PatchInvalidError, PathNotFoundError} = require('./errors');
 
@@ -48,6 +49,9 @@ module.exports = class Operation {
         // if the tail path contains an operation, patch it to be an absolute index
         if (this.tail.path.startsWith('where\(')) {
           const [idx] = fp.evaluate(resource, `${this.path}.$index`);
+          if (typeof idx === 'undefined') {
+            break;
+          }
           this.path = `${this.containingPath}[${idx}]`;
         }
 
@@ -146,10 +150,7 @@ module.exports = class Operation {
    * path element before the final '.'.
    */
   get containingPath() {
-    return this.path
-        .split(/\./g)
-        .slice(0, -1)
-        .join('.');
+    return this.pathTokens.slice(0, -1).join('.');
   }
 
   /**
@@ -234,6 +235,54 @@ module.exports = class Operation {
     }
 
     return result;
+  }
+
+  /**
+   * return the tokenized fhirpath
+   */
+  get pathTokens() {
+    /**
+     * returns path element rendered to string
+     *
+     * @param {Object} p path element
+     * @return {String}
+     */
+    function renderPath(p) {
+      if (_.isString(p)) {
+        return p;
+      }
+
+      if (_.isObject(p)) {
+        if (_.has(p, 'left') && _.has(p, 'right') && _.has(p, 'op')) {
+          return `${renderPath(p.left)} ${p.op} ${renderPath(p.right)}`;
+        }
+
+        if (_.has(p, 'name') && _.has(p, 'params')) {
+          return `${p.name}(${renderPath(p.params)})`;
+        }
+
+        if (_.has(p, 'path')) {
+          return renderPath(p.path);
+        }
+
+        if (_.has(p, 'value')) {
+          return `"${p.value}"`;
+        }
+      }
+
+      if (_.isArray(p)) {
+        return _.map(p, renderPath);
+      }
+
+      throw new Error(`Couldn't parse path ${JSON.stringify(p)}`);
+    }
+
+    const parsed = new fhir.FhirPath().parse(this.path);
+    const paths = _.map(parsed[0].path, renderPath);
+    if (_.has(parsed, '0.resourceType')) {
+      return [_.get(parsed, '0.resourceType'), ...paths];
+    }
+    return paths;
   }
 
   /**
