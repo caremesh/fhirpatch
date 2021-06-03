@@ -96,4 +96,37 @@ describe('Operation', function() {
     });
     expect(op.tail.path).not.to.be.undefined;
   });
+
+  it('should be able to add a prefix @operation.6', async function() {
+    const op = new Operation({
+      type: 'insert',
+      index: 0,
+      path: 'Practitioner.name[0].prefix',
+      value: 'DR',
+      valueType: 'valueString',
+    });
+
+    expect(op.apply({
+      resourceType: 'Practitioner',
+      name: [
+        {
+          family: 'smith',
+          given: [
+            'John',
+          ],
+        },
+      ],
+    })).to.eql({
+      resourceType: 'Practitioner',
+      name: [
+        {
+          family: 'smith',
+          given: [
+            'John',
+          ],
+          prefix: ['DR'],
+        },
+      ],
+    });
+  });
 });
