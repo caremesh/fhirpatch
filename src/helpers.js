@@ -409,6 +409,12 @@ function processValue(value) {
     return value.valueTriggerDefinition;
   }
 
+  if (_.has(value, 'valueAttachment')) {
+    if (!_.isObject(value.valueAttachment)) {
+      throw new Error(`Invalid value for type valueAttachment: ${value.valueAttachment}`);
+    }
+    return value.valueAttachment;
+  }
 
   throw new Error(`Unsupported value.  Got ${JSON.stringify(value)}.`);
 }
