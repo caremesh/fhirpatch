@@ -4,7 +4,7 @@
 
 /* eslint-disable max-len */
 const _ = require('lodash');
-const {Fhir} = require('fhir');
+const { Fhir } = require('fhir');
 const Operation = require('./operation');
 
 const fhir = new Fhir;
@@ -30,7 +30,7 @@ function resourceFormat(resource) {
       return 'xml';
     } catch (error) {
       throw new Error(
-          `Unrecognized resource format or invalid resource: ${resource}`,
+        `Unrecognized resource format or invalid resource: ${resource}`,
       );
     }
   }
@@ -46,7 +46,7 @@ function resourceFormat(resource) {
  */
 function normalizeResource(resource) {
   if (_.isObject(resource)) {
-    return {...resource};
+    return { ...resource };
   };
 
   try {
@@ -71,37 +71,38 @@ function normalizeResource(resource) {
  */
 function parseOperation(operation) {
   const result = Object
-      .values(operation.parameter)
-      .reduce(
-          function(op, i) {
-            switch (i.name) {
-              case 'type':
-                return Object.assign(op, {type: i.valueCode});
-              case 'path':
-                return Object.assign(op, {
-                  path: i.valueString,
-                });
-              case 'name':
-                return Object.assign(op, {name: i.valueString});
-              case 'value':
-                return Object.assign(op,
-                    {
-                      value: processValue(i),
-                      valueType: processValueType(i),
-                    });
-              case 'index':
-                return Object.assign(op, {index: i.valueInteger});
-              case 'source':
-                return Object.assign(op, {source: i.valueInteger});
-              case 'destination':
-                return Object.assign(op, {
-                  destination: i.valueInteger});
-              default:
-                throw new Error(`Received unrecognized parameter: ${i}`);
-            }
-          },
-          new Operation(),
-      );
+    .values(operation.parameter)
+    .reduce(
+      function (op, i) {
+        switch (i.name) {
+          case 'type':
+            return Object.assign(op, { type: i.valueCode });
+          case 'path':
+            return Object.assign(op, {
+              path: i.valueString,
+            });
+          case 'name':
+            return Object.assign(op, { name: i.valueString });
+          case 'value':
+            return Object.assign(op,
+              {
+                value: processValue(i),
+                valueType: processValueType(i),
+              });
+          case 'index':
+            return Object.assign(op, { index: i.valueInteger });
+          case 'source':
+            return Object.assign(op, { source: i.valueInteger });
+          case 'destination':
+            return Object.assign(op, {
+              destination: i.valueInteger,
+            });
+          default:
+            throw new Error(`Received unrecognized parameter: ${i}`);
+        }
+      },
+      new Operation(),
+    );
   result.validate();
   return result;
 }
@@ -117,11 +118,11 @@ function processValue(value) {
   if (value.parameter) {
     if (_.isArray(value.parameter)) {
       return _.reduce(value.parameter,
-          (acc, i) => _.concat(
-              acc,
-              {[i.name]: processValue(i)},
-          ),
-          [],
+        (acc, i) => _.concat(
+          acc,
+          { [i.name]: processValue(i) },
+        ),
+        [],
       );
     } else if (_.isObject) {
       return _.mapvalues(value.paramter, processValue);
@@ -129,6 +130,14 @@ function processValue(value) {
       throw new Error(`Invalid diff: couldn't process value of type parameter with content ${value}`);
     }
   }
+
+  if (_.has(value, 'valueAddress')) {
+    if (!_.isString(value.valueAddress)) {
+      throw new Error(`Invalid value for type valueAddress: ${value.valueAddress}`);
+    }
+    return value.valueAddress;
+  }
+
   if (_.has(value, 'valueBase64Binary')) {
     if (!_.isString(value.valueBase64Binary)) {
       throw new Error(`Invalid value for type valueBase64Binary: ${value.valueBase64Binary}`);
@@ -428,7 +437,7 @@ function processValue(value) {
  */
 function processValueType(value) {
   const result = _.keys(value)
-      .filter((i) => i.startsWith('value'));
+    .filter((i) => i.startsWith('value'));
   return _.get(result, '0', null);
 }
 
