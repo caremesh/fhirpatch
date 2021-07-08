@@ -132,7 +132,7 @@ function processValue(value) {
   }
 
   if (_.has(value, 'valueAddress')) {
-    if (!_.isString(value.valueAddress)) {
+    if (!_.isObject(value.valueAddress)) {
       throw new Error(`Invalid value for type valueAddress: ${value.valueAddress}`);
     }
     return value.valueAddress;
