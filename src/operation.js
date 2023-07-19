@@ -7,6 +7,7 @@ const fp = require('fhirpath');
 const fhir = require('fhir');
 const arrayMove = require('array-move');
 const {PatchInvalidError, PathNotFoundError} = require('./errors');
+const {deepDeleteValue} = require('./deep-delete-value');
 
 module.exports = class Operation {
   /**
@@ -26,7 +27,7 @@ module.exports = class Operation {
 
   /**
    *
-   * @param {Object} resource an object repreentation of a FHIR resource to
+   * @param {Object} resource an object representation of a FHIR resource to
    *                          modify
    * @return {Object} the modified resource
    * @throws {PatchInvalidError} when patch is invalid
@@ -46,31 +47,11 @@ module.exports = class Operation {
         res[0][this.name] = this.value;
         break;
       case 'delete':
-        // if the tail path contains an operation, patch it to be an absolute index
-        if (this.tail.path.startsWith('where\(')) {
-          const [idx] = fp.evaluate(resource, `${this.path}.$index`);
-          if (typeof idx === 'undefined') {
-            break;
-          }
-          this.path = `${this.containingPath}[${idx}]`;
+        // Do it this way to handle multiple matches.
+        for (const val of fp.evaluate(resource, this.path)) {
+          resource = deepDeleteValue(resource, val);
         }
 
-        res = fp.evaluate(resource, this.containingPath);
-
-        if (res[0]) {
-          // it is not an error if a path to delete doesn't already exist
-          if (this.tail.index) {
-            if (res.length == 0) {
-              throw new PathNotFoundError(
-                  `Attempt to modify index but path ${this.containingPath
-                  } is not array`);
-            }
-
-            res[0][this.tail.path].splice(this.tail.index, 1);
-          } else {
-            delete res[0][this.tail.path];
-          }
-        }
         break;
       case 'insert':
         res = fp.evaluate(resource, this.containingPath);
@@ -181,7 +162,7 @@ module.exports = class Operation {
   }
 
   /**
-   * returns a JSON serializable represenation of the operation
+   * returns a JSON serializable representation of the operation
    *
    * @return {Object}
    */

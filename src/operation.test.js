@@ -1,4 +1,5 @@
 const Operation = require('./operation');
+const fhirpath = require('fhirpath');
 
 describe('Operation', function() {
   it('should be possible to apply a boolean replace', function() {
@@ -70,7 +71,7 @@ describe('Operation', function() {
     });
   });
 
-  it('should be possible to delete using a where clause @operation.4', async function() {
+  it('should be possible to delete using a where clause @operation.04', async function() {
     const op = new Operation({
       path: `Organization.alias.where($this = 'foo')`,
       type: 'delete',
@@ -78,18 +79,18 @@ describe('Operation', function() {
 
     result = op.apply({
       resourceType: 'Organization',
-      alias: ['foo'],
+      alias: ['bar', 'foo'],
       name: 'bar',
     });
 
     expect(result).to.eql({
       resourceType: 'Organization',
       name: 'bar',
-      alias: [],
+      alias: ['bar'],
     });
   });
 
-  it('should correctly parse the tail on a path with a where claus @operation.5', async function() {
+  it('should correctly parse the tail on a path with a where clause @operation.05', async function() {
     const op = new Operation({
       path: `Organization.alias.where($this = 'foo')`,
       type: 'delete',
@@ -97,7 +98,7 @@ describe('Operation', function() {
     expect(op.tail.path).not.to.be.undefined;
   });
 
-  it('should be able to add a prefix @operation.6', async function() {
+  it('should be able to add a prefix @operation.06', async function() {
     const op = new Operation({
       type: 'insert',
       index: 0,
@@ -130,7 +131,7 @@ describe('Operation', function() {
     });
   });
 
-  it('should be able to delete a path that doesn\'t exist @operation.7', async function() {
+  it('should be able to delete a path that doesn\'t exist @operation.07', async function() {
     const op = new Operation({
       type: 'delete',
       path: 'Practitioner.telecom.where(value=\'directto:kristen.radcliff@rot.eclinicaldirectplus.com\')',
@@ -147,7 +148,7 @@ describe('Operation', function() {
     it('should properly parse paths of form "Organization.alias" @containingPath.1', async function() {
       const op = new Operation({
         type: 'delete',
-        path: 'Organization.alias',
+        path: 'Organization.0alias',
       });
       expect(op.containingPath).to.eql('Organization');
     });
@@ -162,7 +163,7 @@ describe('Operation', function() {
     });
   });
 
-  it('should be able to delete a path that does exist @operation.8', async function() {
+  it('should be able to delete a path that does exist @operation.08', async function() {
     const op = new Operation({
       type: 'delete',
       path: 'Practitioner.telecom.where(value=\'foo.bar.com\')',
@@ -179,5 +180,147 @@ describe('Operation', function() {
     };
     const result = op.apply(resource);
     expect(result).to.eql({resourceType: 'Practitioner', telecom: []});
+  });
+
+  it('should be able to delete a deeply nested value @operation.09', async function() {
+    const resource = {
+      id: '5507d2e7-0236-58bc-a283-271ee390d23d',
+      resourceType: 'Practitioner',
+      qualification: [
+        {
+          id: 'family',
+          code: {
+            id: 'family',
+            text: 'Family Medicine Physician',
+            coding: [
+              {
+                code: 'family',
+                system: 'http://fhir.caremesh.app/CodeSystem/CaremeshSpecialtyCode',
+                display: 'Family Medicine Physician',
+              },
+              {
+                code: '207Q00000X',
+                system: 'http://fhir.caremesh.app/r4/valueset-provider-taxonomy',
+                display: 'Family Medicine Physician',
+              },
+              {
+                code: '207Q00000X',
+                system: 'http://nucc.org/provider-taxonomy',
+                display: 'Family Medicine Physician',
+              },
+            ],
+          },
+        },
+        {
+          code: {
+            coding: [
+              {
+                code: 'MD',
+                system: 'http://fhir.caremesh.app/r4/caremesh-practitioner-credential',
+                display: 'Doctor of Medicine',
+              },
+            ],
+          },
+        },
+        {
+          code: {
+            text: 'HOWARD UNIVERSITY COLLEGE OF MEDICINE - 1991',
+            coding: [
+              {
+                code: 'M',
+                system: 'http://terminology.hl7.org/CodeSystem/v2-0402',
+              },
+            ],
+          },
+          period: {
+            start: '1991',
+          },
+          identifier: [
+            {
+              use: 'official',
+              value: 'medSchool',
+            },
+          ],
+        },
+      ],
+    };
+
+    const result = new Operation({
+      type: 'delete', path: 'Practitioner.qualification.code.coding.where(code = \'family\')',
+    }).apply(resource);
+
+    expect(result.qualification[0].code.coding.length).to.eql(resource.qualification[0].code.coding.length - 1);
+    expect(fhirpath.evaluate(result, `Practitioner.code.coding.code.where(code='family')`).length).to.equal(0);
+  });
+
+
+  it('should be able to delete a deeply nested value @operation.10', async function() {
+    const resource = {
+      id: '5507d2e7-0236-58bc-a283-271ee390d23d',
+      resourceType: 'Practitioner',
+      qualification: [
+        {
+          id: 'family',
+          code: {
+            id: 'family',
+            text: 'Family Medicine Physician',
+            coding: [
+              {
+                code: 'family',
+                system: 'http://fhir.caremesh.app/CodeSystem/CaremeshSpecialtyCode',
+                display: 'Family Medicine Physician',
+              },
+              {
+                code: '207Q00000X',
+                system: 'http://fhir.caremesh.app/r4/valueset-provider-taxonomy',
+                display: 'Family Medicine Physician',
+              },
+              {
+                code: '207Q00000X',
+                system: 'http://nucc.org/provider-taxonomy',
+                display: 'Family Medicine Physician',
+              },
+            ],
+          },
+        },
+        {
+          code: {
+            coding: [
+              {
+                code: 'MD',
+                system: 'http://fhir.caremesh.app/r4/caremesh-practitioner-credential',
+                display: 'Doctor of Medicine',
+              },
+            ],
+          },
+        },
+        {
+          code: {
+            text: 'HOWARD UNIVERSITY COLLEGE OF MEDICINE - 1991',
+            coding: [
+              {
+                code: 'M',
+                system: 'http://terminology.hl7.org/CodeSystem/v2-0402',
+              },
+            ],
+          },
+          period: {
+            start: '1991',
+          },
+          identifier: [
+            {
+              use: 'official',
+              value: 'medSchool',
+            },
+          ],
+        },
+      ],
+    };
+
+    const result = new Operation({
+      type: 'delete', path: 'Practitioner.qualification.code.where(id = \'family\')',
+    }).apply(resource);
+
+    expect(fhirpath.evaluate(result, `Practitioner.code.id.where($this='family')`).length).to.equal(0);
   });
 });
