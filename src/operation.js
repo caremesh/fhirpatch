@@ -7,7 +7,7 @@ const fp = require('fhirpath');
 const fhir = require('fhir');
 const arrayMove = require('array-move');
 const {PatchInvalidError, PathNotFoundError} = require('./errors');
-const {deepDeleteValue} = require('./deep-delete-value');
+const {deepDeleteValue, wrap, unwrap} = require('./deep-delete-value');
 
 module.exports = class Operation {
   /**
@@ -48,9 +48,11 @@ module.exports = class Operation {
         break;
       case 'delete':
         // Do it this way to handle multiple matches.
+        resource=wrap(resource);
         for (const val of fp.evaluate(resource, this.path)) {
           resource = deepDeleteValue(resource, val);
         }
+        resource=unwrap(resource);
 
         break;
       case 'insert':
