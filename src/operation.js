@@ -49,7 +49,7 @@ module.exports = class Operation {
       case 'delete':
         // Do it this way to handle multiple matches.
         resource=wrap(resource);
-        for (const val of fp.evaluate(resource, this.path)) {
+        for (let val=_.first(fp.evaluate(resource, this.path)); !_.isUndefined(val); val = _.first(fp.evaluate(resource, this.path))) {
           resource = deepDeleteValue(resource, val);
         }
         resource=unwrap(resource);
@@ -164,7 +164,7 @@ module.exports = class Operation {
   }
 
   /**
-   * returns a JSON serializable representation of the operation
+   * returns a JSON serializable represenation of the operation
    *
    * @return {Object}
    */

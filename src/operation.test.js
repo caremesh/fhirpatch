@@ -245,12 +245,14 @@ describe('Operation', function() {
       ],
     };
 
+    expect(fhirpath.evaluate(resource, `Practitioner.qualification.code.coding.where(code='family')`).length).to.equal(1);
+
     const result = new Operation({
       type: 'delete', path: 'Practitioner.qualification.code.coding.where(code = \'family\')',
     }).apply(resource);
 
     expect(result.qualification[0].code.coding.length).to.eql(resource.qualification[0].code.coding.length - 1);
-    expect(fhirpath.evaluate(result, `Practitioner.code.coding.code.where(code='family')`).length).to.equal(0);
+    expect(fhirpath.evaluate(result, `Practitioner.qualification.code.coding.where(code='family')`).length).to.equal(0);
   });
 
 
@@ -322,5 +324,57 @@ describe('Operation', function() {
     }).apply(resource);
 
     expect(fhirpath.evaluate(result, `Practitioner.code.id.where($this='family')`).length).to.equal(0);
+  });
+
+  it('should properly handle delete operations when there\'s more than one match @operation.11', async function() {
+    const op=new Operation({
+      type: 'delete',
+      path: 'Practitioner.qualification.code.coding.where(code = \'207P00000X\')',
+    });
+
+    const rsc={
+      'id': '53e1e39e-09f2-517f-b7c1-ec22f741c2f7',
+      'resourceType': 'Practitioner',
+      'qualification': [
+        {
+          'id': 'emergency',
+          'code': {
+            'id': 'emergency',
+            'text': 'Allopathic & Osteopathic Physicians - Emergency Medicine',
+            'coding': [
+              {
+                'code': 'emergency',
+                'system': 'http://fhir.caremesh.app/CodeSystem/CaremeshSpecialtyCode',
+                'display': 'Emergency Medicine',
+              },
+              {
+                'code': '207P00000X',
+                'system': 'http://fhir.caremesh.app/r4/valueset-provider-taxonomy',
+                'display': 'Allopathic & Osteopathic Physicians - Emergency Medicine',
+              },
+              {
+                'code': '207P00000X',
+                'system': 'http://nucc.org/provider-taxonomy',
+                'display': 'Allopathic & Osteopathic Physicians - Emergency Medicine',
+              },
+            ],
+          },
+        },
+        {
+          'code': {
+            'coding': [
+              {
+                'code': 'MD',
+                'system': 'http://fhir.caremesh.app/r4/caremesh-practitioner-credential',
+                'display': 'Doctor of Medicine',
+              },
+            ],
+          },
+        },
+      ],
+    };
+
+    const result=op.apply(rsc);
+    expect(fhirpath.evaluate(result, `Practitioner.qualification.code.coding.where(code='207P00000X')`).length).to.equal(0);
   });
 });
